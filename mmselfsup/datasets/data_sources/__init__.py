@@ -4,8 +4,9 @@ from .cifar import CIFAR10, CIFAR100
 from .image_list import ImageList
 from .imagenet import ImageNet
 from .imagenet_21k import ImageNet21k
+from .lmdb import Lmdb
 
 __all__ = [
     'BaseDataSource', 'CIFAR10', 'CIFAR100', 'ImageList', 'ImageNet',
-    'ImageNet21k'
+    'ImageNet21k', 'Lmdb'
 ]

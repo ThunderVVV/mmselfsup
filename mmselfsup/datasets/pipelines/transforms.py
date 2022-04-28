@@ -11,6 +11,8 @@ from torchvision import transforms as _transforms
 
 from ..builder import PIPELINES
 
+from imgaug import augmenters as iaa
+
 # register all existing transforms in torchvision
 _EXCLUDED_TRANSFORMS = ['GaussianBlur']
 for m in inspect.getmembers(_transforms, inspect.isclass):
@@ -237,3 +239,29 @@ class Solarization(object):
         repr_str += f'threshold = {self.threshold}, '
         repr_str += f'prob = {self.prob}'
         return repr_str
+
+
+@PIPELINES.register_module()
+class MyTransform(object):
+
+    def __init__(self):
+
+        # light augment
+        self.Augment = iaa.Sequential([iaa.SomeOf((1, 5),
+                [
+                iaa.LinearContrast((0.5, 1.0)),
+                iaa.GaussianBlur((0.5,1.5)),
+                iaa.Crop(percent=((0, 0.4), (0, 0), (0, 0.4), (0, 0)), keep_size=True),
+                iaa.Crop(percent=((0, 0), (0, 0.02), (0, 0), (0, 0.02)), keep_size=True),
+                iaa.Sharpen(alpha=(0.0, 0.5), lightness=(0.0, 0.5)),
+                iaa.PiecewiseAffine(scale=(0.02, 0.03), mode='edge'),
+                iaa.PerspectiveTransform(scale=(0.01,0.02))                
+                ], random_order=True)]
+        )
+
+    def __call__(self, img):
+        # apply transforms on img
+        img = np.array(img)
+        img = self.Augment.augment_image(img)
+        img = Image.fromarray(np.uint8(img))
+        return img
