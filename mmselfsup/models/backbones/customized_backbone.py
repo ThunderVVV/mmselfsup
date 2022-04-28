@@ -15,7 +15,7 @@ from ..builder import BACKBONES
 
 @BACKBONES.register_module()
 class CustomizedBackbone(nn.Module):
-    def __init__(self, SelfSL_layer=False):
+    def __init__(self, SelfSL_layer=False, instance_map="all"):
         super(CustomizedBackbone, self).__init__()
         
         opt=EasyDict()
@@ -30,7 +30,7 @@ class CustomizedBackbone(nn.Module):
         opt.output_channel=512
         opt.hidden_size=256
         opt.self="MoCoSeqCLR"
-        opt.instance_map="all"
+        opt.instance_map=instance_map
         opt.moco_dim=128
         self.opt = opt
         self.stages = {
